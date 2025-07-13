@@ -8,8 +8,6 @@ readonly DATABASE_SUFFIX="${TAG}sql"
 readonly LOGS_SUFFIX="${TAG}log"
 readonly VERSION="v0.4.0"
 readonly OWNER="@ErfJabs"
-readonly SPONSORTEXT="خرید سرور مجازی ایران OkaCloud با تانلینگ اختصاصی رایگان"
-readonly SPONSORLINK="https://t.me/OkaCloud"
 
 
 # ANSI color codes
