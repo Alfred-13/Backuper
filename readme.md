@@ -43,7 +43,7 @@
 To install the latest version, run:  
 
 ```bash
-sudo bash -c "$(curl -sL https://github.com/erfjab/Backuper/raw/master/backuper.sh)"
+sudo bash -c "$(curl -sL https://github.com/Alfred-13/Backuper/raw/master/backuper.sh)"
 ```  
 
 ## 💙 Support the Project  
