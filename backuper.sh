@@ -8,6 +8,8 @@ readonly DATABASE_SUFFIX="${TAG}sql"
 readonly LOGS_SUFFIX="${TAG}log"
 readonly VERSION="v0.4.0"
 readonly OWNER="@ErfJabs"
+readonly SPONSORTEXT="Loading..."
+readonly SPONSORLINK="https://t.me/ErfJabs"
 
 
 # ANSI color codes
@@ -75,12 +77,6 @@ install_dependencies() {
     log "Installing dependencies: ${packages[*]}..."
     
     case $package_manager in
-        apt)
-            apt-get install -y "${packages[@]}" || error "Failed to install dependencies"
-            if ! apt-get install -y default-mysql-client; then
-                apt-get install -y mariadb-client || error "Failed to install MySQL/MariaDB client"
-            fi
-            ;;
         dnf|yum)
             packages+=("mariadb")
             $package_manager install -y "${packages[@]}" || error "Failed to install dependencies"
@@ -261,9 +257,10 @@ generate_template() {
     print "6) Marzban"
     print "7) Marzban Logs"
     print "8) MirzaBot"
-    print "9) WalBot"
+    print "9) Walpanel"
     print "10) HolderBot"
     print "11) MarzHelp + Marzban"
+    print "12) Phantom"
     print "0) Custom"
     print ""
     while true; do
@@ -302,7 +299,7 @@ generate_template() {
                 break
                 ;;
             9)
-                walbot_template
+                walpanel_template
                 break
                 ;;
             10)
@@ -311,6 +308,10 @@ generate_template() {
                 ;;
             11)
                 marzhelp_template
+                break
+                ;;
+            12)
+                phantom_template
                 break
                 ;;
             0)
@@ -401,11 +402,11 @@ holderbot_template() {
     confirm
 }
 
-walbot_template() {
-    log "Checking WalBot configuration..."
+walpanel_template() {
+    log "Checking WalPanel configuration..."
     
     # Set default value for WALDB_FOLDER if not set
-    local WALDB_FOLDER="/opt/walbot/"
+    local WALDB_FOLDER="/opt/walpanel/app/data"
 
     # Check if the directory exists
     if [ ! -d "$WALDB_FOLDER" ]; then
@@ -418,9 +419,31 @@ walbot_template() {
 
     # Export backup variables
     BACKUP_DIRECTORIES="${DIRECTORIES[*]}"
-    log "Complete WalBot"
+    log "Complete WalPanel"
     confirm
 }
+
+phantom_template() {
+    log "Checking Phantom configuration..."
+
+    # Set default value for PHANTOM_FOLDER if not set
+    local PHANTOM_FOLDER="/etc/phantom/config.db"
+
+    # Check if the directory exists
+    if [ ! -d "$PHANTOM_FOLDER" ]; then
+        error "Directory not found: $PHANTOM_FOLDER"
+        return 1
+    fi
+
+    # Add the directory to BACKUP_DIRECTORIES
+    add_directories "$PHANTOM_FOLDER"
+
+    # Export backup variables
+    BACKUP_DIRECTORIES="${DIRECTORIES[*]}"
+    log "Complete Phantom"
+    confirm
+}
+
 
 xui_template() {
     log "Checking X-ui configuration..."
@@ -643,7 +666,7 @@ marzban_template() {
     local DB_PATH="/root/_${REMARK}${DATABASE_SUFFIX}"
     # Generate backup command for MySQL/MariaDB
     if [[ "$db_type" != "sqlite3" ]]; then
-        BACKUP_DB_COMMAND="mysqldump -h $db_host -P $db_port -u $db_user -p'$db_password' '$db_name' > $DB_PATH"
+        BACKUP_DB_COMMAND="mysqldump --column-statistics=0 -h $db_host -P $db_port -u $db_user -p'$db_password' '$db_name' > $DB_PATH"
         DIRECTORIES+=($DB_PATH)
     fi
 
